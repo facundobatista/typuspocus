@@ -191,7 +191,6 @@ BehaviourDatas = {
 
 
 class Individual:
-
     def __init__(self, wardrobe):
         """Each person must have a wardrobe, Ha!"""
         self.wardrobe = wardrobe
@@ -202,16 +201,16 @@ class Individual:
         clothinBehavior = BehaviourDatas[clothinBehavior]
 
         # choose some layers by it's probe
-        sl = []
+        sl = set()
         for layer in self.wardrobe.getLayers():
             if random.random() < clothinBehavior[layer]:
-                sl.append(layer)
+                sl.add(layer)
 
         # if this individual is not going to have a body
         # at least let him be well clothed, for its health!
         if 'body' not in sl:
-            sl = clothinBehavior.keys()
-            sl.remove('body')
+            sl = set(clothinBehavior.keys())
+            sl.discard('body')
 
         # let's wardrobe calculate weights for this level
         self.wardrobe.adjustProbForLevel(level)
