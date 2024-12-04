@@ -14,13 +14,19 @@ import os
 import sys
 
 import pygame
+from pygame.color import Color
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_s
+
+
+Transparent = Color(0, 0, 0, a=0)
+Transparent.a = 0  # ^ above line seems not to set the alpha!
 
 
 def textOutline(font, message, fontcolor, outlinecolor):
     borde = font.render(message, 1, outlinecolor)
     base = font.render(message, 1, fontcolor)
     img = pygame.Surface(base.get_rect().inflate(2, 2).size, 0, base).convert_alpha()
+    img.fill(Transparent)
     for x in 0, 2:
         for y in 0, 2:
             img.blit(borde, (x, y))
