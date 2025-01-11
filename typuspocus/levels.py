@@ -10,20 +10,22 @@ difíciles también los dos.
 
 Anoté entonces los largos de cada hechizo (que estan buenísimos, no los cambiemos) y le
 asigné un tiempo total en función de el tipo de dificultad y el nro de nivel. A partir de
-eso calculo el tiempo por letra.
+eso calculo la velocidad (tiempo por letra).
 
-  Nombre nivel     caracs  tiempo  secs/char  Descripción
-  ---------------  ------  ------  ---------  -----------
-  Teatro prestado     45      35      0.77    Es el más facil, la intro
-  Opera               57      27      0.47    Mas difícil, pero no tanto
-  Magic arena        102      50      0.49    Muy largo, tiempo que le alcance
-  Fiesta musical     117      48      0.41    Más largo, menos tiempo
-  Las Vegas          134      48      0.36    Más largo, tiempo apretado
-  Black magic        119      40      0.34    Menos letras, pero cae más el tiempo
-  Tatooine           114      35      0.31    Sigue acortandose, menos tiempo
-  Area 51            113      30      0.27    Igual de largo, bastante menos tiempo
-  Graveyard          134      25      0.19    Mas largo, el tiempo es aun menor
-  El lugar feliz     145      20      0.14    Mas complicado que la mierda
+  level name        chars  time  speed  score  description
+  ---------------   -----  ----  -----  -----  -----------
+  Teatro prestado     45    35    0.77     58   Es el más facil, la intro
+  Opera               57    27    0.47    121   Mas difícil, pero no tanto
+  Magic arena        102    50    0.49    208   Muy largo, tiempo que le alcance
+  Fiesta musical     117    48    0.41    285   Más largo, menos tiempo
+  Las Vegas          134    48    0.36    372   Más largo, tiempo apretado
+  Black magic        119    40    0.34    350   Menos letras, pero cae más el tiempo
+  Tatooine           114    35    0.31    367   Sigue acortandose, menos tiempo
+  Area 51            113    30    0.27    418   Igual de largo, bastante menos tiempo
+  Graveyard          134    25    0.19    705   Mas largo, el tiempo es aun menor
+  El lugar feliz     145    20    0.14   1036   Mas complicado que la mierda
+
+  Max score is determined by the difficulty of the level (roughly quantity of chars / speed).
 """
 
 import os
@@ -48,7 +50,7 @@ textosNiveles = [
             "Great!\n"
             "You receive an offer to perform in the Paris Opera."),
         tr("You are not even worthy of this demo level."),
-        dict(tiempo_por_caracter=0.77, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.77, preferencia_precision=0.5, max_score=58)
     ),
     (
         tr("Paris Opera"),
@@ -64,7 +66,7 @@ textosNiveles = [
         tr(
             "You blew it, your father disinherited you.\n"
             "You get a job coding ruby on rails."),
-        dict(tiempo_por_caracter=0.47, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.47, preferencia_precision=0.5, max_score=121)
     ),
     (
         tr("Magic Arena"),
@@ -79,7 +81,7 @@ textosNiveles = [
             "Thanks to your help the locals win and you get invited to do your trick at "
             "the after party."),
         tr("An Angry mob of the local fans chases you around the stadium."),
-        dict(tiempo_por_caracter=0.49, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.49, preferencia_precision=0.5, max_score=208)
     ),
     (
         tr("Goth Party"),
@@ -97,7 +99,7 @@ textosNiveles = [
             "You got away clean, and kept a lot of famous people out of jail.\n"
             "You are going to Las Vegas now!!"),
         tr("You go to jail charged with drug possession."),
-        dict(tiempo_por_caracter=0.41, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.41, preferencia_precision=0.5, max_score=285)
     ),
     (
         "Las Vegas",
@@ -114,7 +116,7 @@ textosNiveles = [
             "The IRS wants you for beeing an accesory to tax evasion.\n"
             "They send you Africa where they'll never find you."),
         tr("Your act was a total failure, you got wasted and lost all your money playing craps."),
-        dict(tiempo_por_caracter=0.36, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.36, preferencia_precision=0.5, max_score=372)
     ),
     (
         tr("Black Magic"),
@@ -133,7 +135,7 @@ textosNiveles = [
             "You disappeared the sacred animal.  The angry natives start chasing you around "
             "the jungle."),
         tr("The natives made a tasty casserole out of you."),
-        dict(tiempo_por_caracter=0.34, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.34, preferencia_precision=0.5, max_score=350)
     ),
     (
         "Tatooine",
@@ -152,7 +154,7 @@ textosNiveles = [
         tr(
             "Because you were unwilling to cooperate, the Venusians performed crazy "
             "things with a light saber on your body."),
-        dict(tiempo_por_caracter=0.31, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.31, preferencia_precision=0.5, max_score=367)
     ),
     (
         tr("Area 51"),
@@ -172,7 +174,7 @@ textosNiveles = [
         tr(
             "You couldn't do it.  But you'll have a lot of time to practice since you are "
             "never leaving Area 51."),
-        dict(tiempo_por_caracter=0.27, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.27, preferencia_precision=0.5, max_score=418)
     ),
 
     (
@@ -192,7 +194,7 @@ textosNiveles = [
         tr(
             "You stay in hell. At least you won't have problems finding a lawyer if you ever "
             "come to need one."),
-        dict(tiempo_por_caracter=0.19, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.19, preferencia_precision=0.5, max_score=705)
     ),
     (
         tr("Hugh's Place"),
@@ -213,7 +215,7 @@ textosNiveles = [
         tr(
             "Mmm...\n"
             "Too bad you couldn't do it, but hey, a horde of naked angels offers to console you!"),
-        dict(tiempo_por_caracter=0.14, preferencia_precision=0.5)
+        dict(tiempo_por_caracter=0.14, preferencia_precision=0.5, max_score=1036)
     ),
 ]
 

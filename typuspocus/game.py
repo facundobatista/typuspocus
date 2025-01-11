@@ -804,22 +804,17 @@ class Ranking(Scene):
         "Gandalf",
         "Merlin",
     ]
-    stages = [10, 20, 40, 60, 80, 100, 120, 140, 200]
+    # carefully crafted after levels max scores
+    # - first level has 58 points, so if you at least played it kind of ok you get the first title
+    # - sum of all max scores is 3920, so to get the top title you need ~90% of that
+    stages = [40, 80, 160, 320, 640, 1100, 1700, 2500, 3500]
 
-    def init(self, rank=None, score=None):
-
-        if score is None:
-            score = random.randint(0, 1000)
-            if rank is None:
-                rank = 9  # random.randint(0,10)
-        elif rank is None:
-            rank = sum([1 for i in self.stages if score > i])
-
+    def init(self, score):
         self._background = pygame.image.load(
             os.path.join(ESCENARIO, "screens/ranking.png")).convert()
         self.paint_info = False
         self.score = score
-        self.rank = rank
+        self.rank = sum([1 for i in self.stages if score > i])
         self.kaping = True
         self.font = pygame.font.Font(FONT_MAGIC, 65)
         self.font2 = pygame.font.Font(FONT_MAGIC, 90)
@@ -1236,7 +1231,7 @@ class MainMenu(Scene):
             laAudiencia.doGame()
             level = Level(self.game, count, MainMotor(**params), laAudiencia)
             result = self.runScene(level)
-            newscore = int(level.motor.score)
+            newscore = int(round(level.motor.score))
             score += newscore
             if result == GANO:
                 laAudiencia.doWin()
@@ -1270,7 +1265,7 @@ class MainMenu(Scene):
             laAudiencia.doGame()
             level = Level(self.game, count, MainMotor(**params), laAudiencia)
             result = self.runScene(level)
-            newscore = int(level.motor.score)
+            newscore = int(round(level.motor.score))
             score += newscore
             if result == GANO:
                 laAudiencia.doWin()
