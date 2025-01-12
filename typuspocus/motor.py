@@ -5,13 +5,6 @@ from typuspocus import cosas, phrases
 
 DEBUG = 0
 
-PALABRAS = (
-    "Nuestro objetivo es nuclear a los usuarios de Python, de manera de centralizar "
-    "la comunicacion a nivel nacional. Pretendemos llegar a usuarios y empresas, "
-    "promover el uso de Python, intercambiar informacion, compartir experiencias y "
-    "en general, ser el marco de referencia local en el uso y difusion de esta tecnologia.".split()
-)
-
 
 class Estados:
     (VIRGEN, OK_DEUNA, OK_CORRG, MAL) = range(4)
@@ -91,7 +84,6 @@ class MainMotor(object):
         if spell is None:
             spell = phrases.Spell(cant).getPhrase()
         for pal in spell.split(" "):
-            # pal = random.choice(PALABRAS)
             largo = len(pal)
             palabras.append(pal)
             indice[base + largo - 1] = (base, base + largo)
@@ -161,7 +153,7 @@ class MainMotor(object):
 
         # actualizamos el calor del publico
         if time.time() - self.last_update > 1:
-            self._calcCalor()
+            self._update_vars()
             self.last_update = time.time()
 
         # evento? vemos si hace rato que no tocamos una tecla
@@ -196,14 +188,14 @@ class MainMotor(object):
             print(acertados, "/", len(self.estado))
         return porcentaje >= self.precision_requerida
 
-    def _calcCalor(self):
-        """calcula el calor del publico y lo pone en self.calor
-        se debe ejecutar una vez por segundo
-        tambien updetea el score
-        Es un float, entre -1 (super enojado) y 1 (super alegre).
-        0 es neutro.
+    def _update_vars(self):
+        """Update some internal variables: heat and score.
 
-        ver: https://opensvn.csie.org/traccgi/PyAr/wiki/FuncionCalor
+        Should be executed once per second. The "heat" is a float, between -1 (super angry) to
+        1 (super happy). 0 is neutral. See https://opensvn.csie.org/traccgi/PyAr/wiki/FuncionCalor
+
+        The score is calculated from the level's max score. Passing time and bad keystrokes
+        eat from that max (in different proportions).
         """
 
         # calculos previos
@@ -242,8 +234,8 @@ class MainMotor(object):
 
         # mezlcamos ambos
         delta_calor = (
-            calor_precision * self.preferencia_precision
-            + calor_velocidad * (1 - self.preferencia_precision)
+            calor_precision * self.preferencia_precision +
+            calor_velocidad * (1 - self.preferencia_precision)
         )
 
         # filtros pre delta
@@ -262,15 +254,31 @@ class MainMotor(object):
         if calor < -1:
             calor = -1
 
-        # corregimos el calor y el score
+        # corregimos el calor
         self.calor = calor
-        self.score += calor
-        if self.score < 0:
-            self.score = 0.0
         if DEBUG:
             print("calor: %.2f\t calp: %.2f\t calv: %.2f\t rpre: %.2f\t rvel: %.2f\t" % (
                 calor, calor_precision, calor_velocidad, ratio_precision, ratio_velocidad))
-        return calor
+
+        # calculate the score; bad strokes and passing time consumes the max available score
+        # - bad strokes consume proportionally to 2 * max: the idea is that if you have half of
+        #   the keystrokes bad, you consumed all the "available" score
+        # - passing time consumes proportionally to 0.5 * max: the idea is that you get to the
+        #   very last second only half of the score will be gone (you should never get there anyway
+        #   because you're in the risk of just lose all the game)
+        # With both working together, we have this balance:
+        #     if you get 75% of chars ok in 50% the time, you get 25% of the max score
+        bad_keystrokes = sum(st == Estados.VIRGEN or st == Estados.MAL for st in self.estado)
+        keystrokes_rate = bad_keystrokes / self.largohech
+        reduce_by_keystrokes = keystrokes_rate * 2 * self.max_score
+
+        passed_time_pct = (time.time() - self.startTime) / self.tiempoJuego
+        reduced_by_time = passed_time_pct * 0.5 * self.max_score
+
+        score = self.max_score - reduce_by_keystrokes - reduced_by_time
+        if score < 0:
+            score = 0
+        self.score = score
 
     def getRate(self):
         if self.dirty:
