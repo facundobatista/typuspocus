@@ -1,0 +1,12 @@
+name: TypusPocus
+exec:
+  module: typuspocus
+requirements:
+  - requirements.txt
+include:
+  - AUTHORS.txt
+  - MANIFEST.in
+  - README.md
+  - gpl-2.txt
+  - requirements.txt
+  - typuspocus/**
